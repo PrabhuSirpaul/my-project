@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Summarization App</title>
+</head>
+<body>
+
+    <h1>Text Summarization</h1>
+
+    <textarea id="text-input" rows="10" cols="50" placeholder="Enter text here..."></textarea><br><br>
+
+    <button onclick="summarizeText()">Summarize Text</button>
+
+    <div id="result" style="display:none;">
+        <h3>Summary:</h3>
+        <p id="summary-text"></p>
+    </div>
+
+    <script>
+        async function summarizeText() {
+            const text = document.getElementById('text-input').value;
+
+            if (text.trim() === "") {
+                alert("Please enter some text to summarize!");
+                return;
+            }
+
+            try {
+                // Send the request to FastAPI
+                const response = await fetch('http://127.0.0.1:8000/summarize', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: text })  // Send the text as JSON
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch summary');
+                }
+
+                const data = await response.json();
+
+                // Check if the response contains summary and display it
+                if (data && data.summary) {
+                    document.getElementById('result').style.display = 'block';
+                    document.getElementById('summary-text').innerText = data.summary;
+                } else {
+                    document.getElementById('result').style.display = 'block';
+                    document.getElementById('summary-text').innerText = 'Error: No summary returned';
+                }
+            } catch (error) {
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('summary-text').innerText = `Error: ${error.message}`;
+            }
+        }
+    </script>
+
+</body>
+</html>
