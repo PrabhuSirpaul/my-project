@@ -1,20 +1,22 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
-import re
+import os
+import streamlit as st
 
-app = FastAPI()
+# Get the port from the environment variable or default to 8501 if not set
+port = os.getenv("PORT", 8501)
 
-class TextData(BaseModel):
-    text: str
+# Set up the Streamlit page configuration
+st.set_page_config(page_title="Your App", page_icon=":guardsman:", layout="centered")
 
-def simple_summarize(text):
-    sentences = re.split(r'(?<=[.!?]) +', text)
-    if len(sentences) <= 2:
-        return text
-    else:
-        return ' '.join(sentences[:2])
+# Your Streamlit UI code goes here
+st.title("Welcome to Your Streamlit App")
+st.write("This is a basic example of a Streamlit app.")
 
-@app.post("/summarize")
-def summarize_text(data: TextData):
-    summary = simple_summarize(data.text)
-    return {"summary": summary}
+# Add some other elements like buttons or text fields
+name = st.text_input("Enter your name:")
+if st.button("Submit"):
+    st.write(f"Hello, {name}!")
+
+# Run Streamlit with the dynamically assigned port
+if __name__ == "__main__":
+    # Streamlit will automatically detect the correct port, but you can explicitly specify it here
+    st.run(port=port)
